@@ -6,7 +6,7 @@ function App() {
     <div className="App">
       <header className="App-header">
         <h1>🚀 Options Strategy Backtesting Platform</h1>
-        <p>Professional-grade options pricing and strategy analysis</p>
+        <p>Professional-grade Options pricing and Strategy analysis</p>
 
         <div className="feature-grid">
           <div className="feature-card">

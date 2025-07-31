@@ -356,6 +356,7 @@ function App() {
     if (
       newPosition.symbol &&
       newPosition.strike &&
+      newPosition.expiry &&
       newPosition.quantity &&
       newPosition.premium
     ) {
@@ -377,6 +378,14 @@ function App() {
         quantity: "",
         premium: "",
       });
+
+      // Show success message
+      alert("Position added to portfolio successfully!");
+    } else {
+      // Show error message for missing fields
+      alert(
+        "Please fill in all required fields: Symbol, Strike Price, Expiry Date, Quantity, and Premium."
+      );
     }
   };
 
@@ -853,6 +862,168 @@ function App() {
     </div>
   );
 
+  const renderGreeksAnalysis = () => (
+    <div>
+      <div className="section-divider"></div>
+      <div className="calculator-section">
+        <h2>Greeks Analysis & Risk Management</h2>
+        <div className="input-grid">
+          <div className="input-group">
+            <label>Stock Price (₹)</label>
+            <input
+              type="number"
+              value={optionInputs.stockPrice}
+              onChange={(e) =>
+                setOptionInputs({
+                  ...optionInputs,
+                  stockPrice: parseFloat(e.target.value),
+                })
+              }
+            />
+          </div>
+          <div className="input-group">
+            <label>Strike Price (₹)</label>
+            <input
+              type="number"
+              value={optionInputs.strikePrice}
+              onChange={(e) =>
+                setOptionInputs({
+                  ...optionInputs,
+                  strikePrice: parseFloat(e.target.value),
+                })
+              }
+            />
+          </div>
+          <div className="input-group">
+            <label>Days to Expiry</label>
+            <input
+              type="number"
+              value={optionInputs.timeToExpiry}
+              onChange={(e) =>
+                setOptionInputs({
+                  ...optionInputs,
+                  timeToExpiry: parseInt(e.target.value),
+                })
+              }
+            />
+          </div>
+          <div className="input-group">
+            <label>Volatility (%)</label>
+            <input
+              type="number"
+              step="0.01"
+              value={(optionInputs.volatility * 100).toFixed(2)}
+              onChange={(e) =>
+                setOptionInputs({
+                  ...optionInputs,
+                  volatility: parseFloat(e.target.value) / 100,
+                })
+              }
+            />
+          </div>
+          <div className="input-group">
+            <label>Risk-Free Rate (%)</label>
+            <input
+              type="number"
+              step="0.01"
+              value={(optionInputs.riskFreeRate * 100).toFixed(2)}
+              onChange={(e) =>
+                setOptionInputs({
+                  ...optionInputs,
+                  riskFreeRate: parseFloat(e.target.value) / 100,
+                })
+              }
+            />
+          </div>
+        </div>
+
+        <button className="calculate-button" onClick={calculateOption}>
+          {isCalculating ? "Calculating..." : "Calculate Greeks"}
+        </button>
+
+        {optionResults && (
+          <div className="results-section">
+            <h3>Greeks Analysis Results</h3>
+            <div className="greeks-grid">
+              <div className="greek-card">
+                <h4>Delta (Δ)</h4>
+                <div className="greek-values">
+                  <div>Call: {optionResults.greeks.delta_call.toFixed(4)}</div>
+                  <div>Put: {optionResults.greeks.delta_put.toFixed(4)}</div>
+                </div>
+                <p className="greek-explanation">
+                  Price sensitivity to ₹1 change in stock price
+                </p>
+              </div>
+
+              <div className="greek-card">
+                <h4>Gamma (Γ)</h4>
+                <div className="greek-values">
+                  <div>Value: {optionResults.greeks.gamma.toFixed(4)}</div>
+                </div>
+                <p className="greek-explanation">Rate of change of Delta</p>
+              </div>
+
+              <div className="greek-card">
+                <h4>Theta (Θ)</h4>
+                <div className="greek-values">
+                  <div>Call: ₹{optionResults.greeks.theta_call.toFixed(2)}</div>
+                  <div>Put: ₹{optionResults.greeks.theta_put.toFixed(2)}</div>
+                </div>
+                <p className="greek-explanation">Time decay per day</p>
+              </div>
+
+              <div className="greek-card">
+                <h4>Vega (ν)</h4>
+                <div className="greek-values">
+                  <div>Value: ₹{optionResults.greeks.vega.toFixed(2)}</div>
+                </div>
+                <p className="greek-explanation">
+                  Sensitivity to 1% volatility change
+                </p>
+              </div>
+
+              <div className="greek-card">
+                <h4>Rho (ρ)</h4>
+                <div className="greek-values">
+                  <div>Call: ₹{optionResults.greeks.rho_call.toFixed(2)}</div>
+                  <div>Put: ₹{optionResults.greeks.rho_put.toFixed(2)}</div>
+                </div>
+                <p className="greek-explanation">
+                  Sensitivity to 1% interest rate change
+                </p>
+              </div>
+            </div>
+
+            <div className="risk-analysis">
+              <h4>Risk Analysis</h4>
+              <div className="risk-metrics">
+                <div className="risk-item">
+                  <strong>Position Risk:</strong>
+                  {Math.abs(optionResults.greeks.delta_call) > 0.5
+                    ? " High Delta Exposure"
+                    : " Moderate Delta Exposure"}
+                </div>
+                <div className="risk-item">
+                  <strong>Time Decay:</strong>
+                  {optionResults.greeks.theta_call < -10
+                    ? " High Time Decay Risk"
+                    : " Moderate Time Decay"}
+                </div>
+                <div className="risk-item">
+                  <strong>Volatility Risk:</strong>
+                  {optionResults.greeks.vega > 50
+                    ? " High Volatility Sensitivity"
+                    : " Moderate Volatility Sensitivity"}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+
   const renderStrategyBacktesting = () => (
     <div>
       <div className="section-divider"></div>
@@ -1266,7 +1437,7 @@ function App() {
     <div className="App">
       <header className="App-header">
         <h1>QuantOptions</h1>
-        <p>Professional-grade options pricing and strategy analysis</p>
+        <p>Professional-grade Options pricing and Strategy analysis</p>
 
         {/* Navigation Bar */}
         <nav className="nav-bar">
@@ -1318,7 +1489,7 @@ function App() {
         <div className="content-area">
           {activeSection === "overview" && renderOverview()}
           {activeSection === "pricing" && renderPricingCalculator()}
-          {activeSection === "greeks" && renderPricingCalculator()}
+          {activeSection === "greeks" && renderGreeksAnalysis()}
           {activeSection === "backtesting" && renderStrategyBacktesting()}
           {activeSection === "portfolio" && renderPortfolioManagement()}
         </div>
