@@ -1265,7 +1265,7 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <h1>Options Strategy Backtesting Platform</h1>
+        <h1>QuantOptions</h1>
         <p>Professional-grade options pricing and strategy analysis</p>
 
         {/* Navigation Bar */}
