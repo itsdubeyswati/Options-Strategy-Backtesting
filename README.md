@@ -1,4 +1,4 @@
-# QuantOptions: Professional Options Trading Platform
+# QuantOptions: Options Trading Platform
 
 A comprehensive React-based options trading platform featuring Black-Scholes pricing, Greeks analysis, strategy backtesting, and portfolio management - optimized for the Indian market with INR currency integration.
 
